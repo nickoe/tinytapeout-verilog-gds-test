@@ -17,7 +17,7 @@
 // Module
 //------------------------------------------------------------------------------
 
-module sim (
+module user_module_342176160444056147 (
 	output wire sim_trace,
 	input  wire sys_clk,
 	input  wire sys_rst,
