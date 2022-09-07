@@ -16,13 +16,8 @@ from litex.build.sim.config import SimConfig
 _io = [
     ("sys_clk", 0, Pins(1)),
     ("sys_rst", 0, Pins(1)),
-    ("user_led", 0, Pins(1)),
-    ("user_led", 1, Pins(1)),
-    ("user_led", 2, Pins(1)),
-    ("user_led", 3, Pins(1)),
-    ("user_led", 4, Pins(1)),
-    ("user_led", 5, Pins(1)),
-    ("user_led", 6, Pins(1)),
+    ("io_in", 0, Pins(8)),
+    ("io_out", 0, Pins(8)),
 ]
 
 class TinyTapeoutPlatform(SimPlatform):
@@ -45,7 +40,7 @@ class MyModule(Module):
 
         # Leds -------------------------------------------------------------------------------------
         self.submodules.leds = LedChaser(
-            pads         = platform.request_all("user_led"),
+            pads         = platform.request_all("io_out"),
             sys_clk_freq = sys_clk_freq)
         #self.add_csr("leds")
 

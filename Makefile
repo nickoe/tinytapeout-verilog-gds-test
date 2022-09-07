@@ -4,7 +4,6 @@ WOKWI_PROJECT_ID=342176160444056147
 # the clock divider 334335179919196756
 fetch:
 	#curl https://wokwi.com/api/projects/$(WOKWI_PROJECT_ID)/verilog > src/user_module_$(WOKWI_PROJECT_ID).v
-	#cp litex_out/sim.v src/user_module_$(WOKWI_PROJECT_ID).v
 	sed -e 's/USER_MODULE_ID/$(WOKWI_PROJECT_ID)/g' template/scan_wrapper.v > src/scan_wrapper_$(WOKWI_PROJECT_ID).v
 	sed -e 's/USER_MODULE_ID/$(WOKWI_PROJECT_ID)/g' template/config.tcl > src/config.tcl
 	echo $(WOKWI_PROJECT_ID) > src/ID
@@ -20,3 +19,7 @@ harden:
 	$(OPENLANE_IMAGE_NAME) \
 	/bin/bash -c "./flow.tcl -overwrite -design /work/src -run_path /work/runs -tag wokwi"
 
+update:
+	#./my_litex_design.py
+	cp litex_out/sim.v src/user_module_$(WOKWI_PROJECT_ID).v
+	sed -i 's/module sim/module user_module_$(WOKWI_PROJECT_ID)/g' src/user_module_$(WOKWI_PROJECT_ID).v
