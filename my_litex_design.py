@@ -4,29 +4,14 @@ import datetime
 import time
 
 
-from amaranth.compat import *
+#from amaranth.compat import *
+from migen import *
+
 from litex.soc.cores.led import LedChaser
 from litex.build.generic_platform import *
 from litex.soc.integration.builder import *
 from litex.build.sim import SimPlatform
 from litex.build.sim.config import SimConfig
-
-logging.basicConfig(level=logging.INFO)
-
-def colorer(s, color="bright"):
-    header  = {
-        "bright": "\x1b[1m",
-        "green":  "\x1b[32m",
-        "cyan":   "\x1b[36m",
-        "red":    "\x1b[31m",
-        "yellow": "\x1b[33m",
-        "underline": "\x1b[4m"}[color]
-    trailer = "\x1b[0m"
-    return header + str(s) + trailer
-
-def build_time(with_time=True):
-    fmt = "%Y-%m-%d %H:%M:%S" if with_time else "%Y-%m-%d"
-    return datetime.datetime.fromtimestamp(time.time()).strftime(fmt)
 
 _io = [
     ("sys_clk", 0, Pins(1)),
@@ -35,21 +20,19 @@ _io = [
     ("user_led", 1, Pins(1)),
     ("user_led", 2, Pins(1)),
     ("user_led", 3, Pins(1)),
+    ("user_led", 4, Pins(1)),
+    ("user_led", 5, Pins(1)),
+    ("user_led", 6, Pins(1)),
 ]
 
-
-#class TinyTapeoutPlatform(GenericPlatform):
 class TinyTapeoutPlatform(SimPlatform):
     def __init__(self):
-        SimPlatform.__init__(self, device="SIM", io=_io)
+        SimPlatform.__init__(self, device="SIM", io=_io, name="user_module_342176160444056147")
 
 
 class MyModule(Module):
     def __init__(self, platform, sys_clk_freq):
-        self.logger = logging.getLogger("NICK DEBUG MyModule")
-        self.logger.info(colorer("Creating SoC... ({})".format(build_time())))
-        self.logger.info("FPGA device : {}.".format(platform.device))
-        self.logger.info("System clock: {:3.3f}MHz.".format(sys_clk_freq/1e6))
+        print("NICK DEBUG MyModule")
 
         # SoC attributes ---------------------------------------------------------------------------
         self.platform     = platform
@@ -58,13 +41,15 @@ class MyModule(Module):
         self.csr_regions  = {}
 
         # CRG --------------------------------------------------------------------------------------
-        #self.submodules.crg = CRG(platform.request("sys_clk"))
+        self.submodules.crg = CRG(clk=platform.request("sys_clk"), rst=platform.request("sys_rst"))
 
         # Leds -------------------------------------------------------------------------------------
         self.submodules.leds = LedChaser(
             pads         = platform.request_all("user_led"),
             sys_clk_freq = sys_clk_freq)
         #self.add_csr("leds")
+
+        self.comb += platform.trace.eq(1)
 
 
 def main():
@@ -74,19 +59,13 @@ def main():
 
     platform = TinyTapeoutPlatform()
     sim = MyModule(platform, sys_clk_freq)
-
-    # builder = Builder(my_mod)
-    # builder.build(
-    #     compile_software = False,
-    #     compile_gateware = True,
-    #     sim_config       = sim_config,
-    #     trace            = True,
-    #     trace_fst        = True,
-    #     trace_start      = 0,
-    #     trace_end        = 1000,
-    # )
-    platform.build(sim, build_dir="./", run=False )
-    pass
+    platform.build(sim, sim_config=sim_config, interactive=True, build_dir="./litex_out", run=True,
+                   trace=True,
+                   trace_fst=True,
+                   trace_start=0,
+                   trace_end=-1,
+                   )
+    print("exit")
 
 
 if __name__ == "__main__":
