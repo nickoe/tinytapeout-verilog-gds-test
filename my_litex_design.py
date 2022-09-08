@@ -39,12 +39,19 @@ class MyModule(Module):
         self.submodules.crg = CRG(clk=platform.request("sys_clk"), rst=platform.request("sys_rst"))
 
         # Leds -------------------------------------------------------------------------------------
-        self.submodules.leds = LedChaser(
+        ledchaser = LedChaser(
             pads         = platform.request_all("io_out"),
             sys_clk_freq = sys_clk_freq)
+        self.submodules.leds = ledchaser
+        # control of brightness...
+        ledchaser.add_pwm(default_width=900)
         #self.add_csr("leds")
 
+        #self.comb += ledchaser.mode.eq(1)
+
         self.comb += platform.trace.eq(1)
+
+        platform.request_all("io_in"),
 
 
 def main():
