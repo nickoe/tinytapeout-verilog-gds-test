@@ -20,6 +20,4 @@ harden:
 	/bin/bash -c "./flow.tcl -overwrite -design /work/src -run_path /work/runs -tag wokwi"
 
 update:
-	#./my_litex_design.py
-	cp litex_out/sim.v src/user_module_$(WOKWI_PROJECT_ID).v
-	sed -i 's/module sim/module user_module_$(WOKWI_PROJECT_ID)/g' src/user_module_$(WOKWI_PROJECT_ID).v
+	./my_litex_design.py
