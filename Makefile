@@ -20,7 +20,8 @@ harden:
 	/bin/bash -c "./flow.tcl -overwrite -design /work/src -run_path /work/runs -tag wokwi"
 
 update:
-	./my_litex_design.py
+	#./my_litex_design.py
+	docker run --rm -e LOCAL_USER_ID=`id -u ${USER}` -e LOCAL_GROUP_ID=`id -g ${USER}` -v `pwd`:/work -it nickoe-litex bash -l -c "./my_litex_design.py"
 	# Hack for IO's
 	sed -i 's/io_in0/io_in/g' src/user_module_$(WOKWI_PROJECT_ID).v
 	sed -i 's/io_out0/io_out/g' src/user_module_$(WOKWI_PROJECT_ID).v
