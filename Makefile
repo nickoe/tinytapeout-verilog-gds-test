@@ -21,3 +21,6 @@ harden:
 
 update:
 	./my_litex_design.py
+	# Hack for IO's
+	sed -i 's/io_in0/io_in/g' src/user_module_$(WOKWI_PROJECT_ID).v
+	sed -i 's/io_out0/io_out/g' src/user_module_$(WOKWI_PROJECT_ID).v
